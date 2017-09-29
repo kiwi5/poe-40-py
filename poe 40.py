@@ -1,97 +1,107 @@
 ## return values summing up to exactly 40
 # BONUS: window always on top
 # BONUS: if compatible file's present --> read data from it w/o asking
+# BONUS: reading from file & FURTHER manual reading - and saving the whole afterwards, for later (must be able to subtract from what's already there)
+# TODO: shorten loops using list comprehension, so it'd only ever be adding what's =40, at all
+# TODO: if 'kombinZ()' won't find ANY combination --> print this info & cease operation
+
 
 # BONUS: additional features & things that may become TODOs once current ones are dealt with
 # BUG: 
-# CASE:
+# CASE: 
 # TODO: 
 
 # ============================= IMPORTS: ===============================
 from itertools import combinations
-
+from re import sub
 
 # ============================ FUNCTIONS: ==============================
 def spcInput():
-  # input works, but is illegal, bc 'eval()'
-  #
-  # CASE: restrict to values <1,19>!
+   '''Asks for integer input: returns reversely sorted list of values <1,20>.'''
+   # input works, but is UNSAFE to use, due to 'eval()' being applied
    while True:
-      try:
-         # DEBUG: tabl = eval("[" + input("Input space-separated values: ").replace(" ",",") + "]")
-         tabl = eval("[" + str("6 18 14 9 12 10 10 10 9 5 8 2 10").replace(" ",",") + "]")
-         # TODO: convert all \s+ \t* to ','      re.sub()
+      try:   
+         # DEBUG: tabl = eval("[" + sub("(^[\D]+)|([\D]+$)","",sub("[\D]+",",",str("6 18 14 9 12 10 10 10 9 5 8 2 10"))) + "]") #.replace(" ",",")
+         # DEBUG: tabl = eval("[" + sub("(^[\D]+)|([\D]+$)","",sub("[\D]+",",",str(" 43 5 -565-43-78_32+32,65,32  ,456 +_,64"))) + "]") #.replace(" ",",")
+
+         tabl = eval("[" + sub("(^[\D]+)|([\D]+$)","",sub("[\D]+",",",input("Input values separated with space or coma: \n> "))) + "]")
+         # allows nothing besides digits at beginning/end of input
+         #  and changes any other non-digits in-between to comas
+         # TODO: find a simpler regex for this
+         print("Raw:  %r" % tabl)
       except (NameError, SyntaxError):
-         print("Incorrect values! I take only numbers & spaces.")
+         print("Incorrect input: I only take numbers, spaces and comas.")
          continue
-      for n in tabl:
-         # BUG: passes floats!
-         if "float" in str(type(n)):
-            print("Float values were inputted, there might be some errors..")
-            n = int(n)      
-            # BUG: doesn't change floats, n I dunno Y 
-            # BONUS: request to reinput of that which was detected to be a float
-            #
-            # 'break' here gone immediately under 'for',
-            ##  and 'continue' passes 'for' till end, pointlessly
+      for n in tabl[:]:
+         if n > 20 or n < 1:
+            tabl.remove(n)
       break
    tabl.sort(reverse=True)
    return tabl
 
 def kombinZ(proc_array_, arr=[(40,)]):
-   '''returns all combinations that sum to 40, sorted, and prints them out'''
+   '''Returns all combinations summing up to 40, sorted up, \nand prints them in lines.'''
    # BUG: if there're *possible* TWO IDENTICAL combinations, then it treats one as duplicate!
    ## eg. '10 10 10 10 10 10 10 10' (that's 2x40 combos, and as such should be returned)
-   # BONUS: sorted in algorithm itself
-   # BONUS: addition of [optional] argument for 'variable 40'
+   # BONUS: sorted in algorithm itself (is that doable?)
+   # BONUS: addition of [optional] simple argument for 'variable 40'
    # TODO.META:   1. de-duplicate after/while generation
    ##             2. the 'and' from the 'if' below & non-empty initial list --> are not necessary
    ##             3. <here was supposed to BE something, perhabs...>
    proc_array = proc_array_[:]
    proc_array.sort(reverse=True)
-   #arr=[(40,)]    # non-empty, so in 'if' below it doesn't go 'IndexError'
+   # arr=[(40,)]    # non-empty, so that in 'if' below it doesn't go 'IndexError'
+   # BUG: w/o resetting the 'arr=..' above, the function behaves as if initiated with values it had at its end in the previous loop
+   ## I didn't expect Python to do that...
    for x in range(3,len(proc_array)):      # from 3, bc only 2*20 == 40
       LT = list(combinations(proc_array, x))      # alien code!
       LT.sort(reverse=True)
          # so that dups are adjacent
          # TODO: change this to de-dupl. w/o sorting + adjust the 'if' below
-         # TODO: so that BEFORE THE 'FOR' the list was unique (in the sort itself, already?)
+         # TODO: change, so that BEFORE THE 'FOR' the list has only unique elems (in the sort itself, already?)
          ##          or below, moving the iterator to the next unrepeating
          ##          (bc it checks pointlessly)
       for T in LT:
          if sum(T) == 40 and T != arr[-1]:
-            # thanks to this 'and' there're no dups = and no separate f()'s needed!
+            # thanks to this "and" there're no dups = and no separate f()'s needed!
             arr.append(T)
    arr.sort(reverse=True)
-      # so it returns sorted (by): amount of elems in tuple(asc.) --> numerical
-      # BONUS: sorting w/ highest amount on top
-   
-   # printout sequence:
-   print("kombinZ: ")
-   printout = []
-   for a in arr:
-      printout.append([len(a), a])
-   printout.sort(reverse=True)
-   for a in printout:
-      print(printout.index(a), a)
-   
+      # so it returns sorted: by amount of elems in tuple asc. --> numerically
+   #  # BONUS: sorting w/ highest amount on top
+   #
+   # print sequence:
+   print("Raw combinations: ")
+   if arr == [(40,)]:
+      print(" No matches found.")
+   else:
+      # TODO: simplify printout, so it doesn't duplicate by itself (it's so for sorting by amount)    # ??
+      # TODO: don't print entries with less elements than max (bc list can easily get lenghty)
+      # BONUS: remove the element "[(40,)]" from 'arr' variable (or just from printing it)
+      printout = []
+      for a in arr:
+         printout.append([len(a), a])
+      printout.sort(reverse=True)
+      for a in printout:
+         print("%2d %r" % (printout.index(a), a))
+      print("\n")
+   #
    return arr
 
 def kombi_opt(list0_, ref):
-   # TODO: turn it into a class
+   # TODO: turn this f() into a class (for more flexible printing, among others)
    ##       w/ method to printout elements sorted by their amount in "pair"
    list0 = list0_[:]
    list0.sort(reverse=True)
    arr = []
    if len(list0[0]) == 1:
-      del list0[0]      # remove lone element, eg. '(40,)'
+      del list0[0]      # removes lone element, eg. "(40,)"
    for w in range(2,5): 
-      # TODO: don't 'i++' anymore, if 'i' had zero results 
-      ## = limit to how far it combines them
+      # TODO: don't "i++" anymore, if for "i" had zero results (instead of range ending at "4")
+      ## it serves as a (poor) limit to how far it tries to combine them
       LK = list(combinations(list0, w))      # alien code!
       LK.sort(reverse=True)
       #print(LK[0]) #
-      for z in LK:      # each specific case is here
+      for z in LK:         # each specific case
          seq = ref[:]
          out = False
          for y in z:    
@@ -105,70 +115,50 @@ def kombi_opt(list0_, ref):
                break
          if not out:
             arr.append(z)
-   arr.sort(reverse=True)  # TODO: sort by nr of elements in combination
-
-   # printout sequence:
-   print("\nkombi_opt: ")
-   printout = []
-   for b in arr:
-      lengt = 0
-      for a in b:
-         lengt += len(a)
-      printout.append([lengt, b])
-   printout.sort(reverse=True)
-   for a in printout:
-      print(printout.index(a), a)
-   
+   arr.sort(reverse=True)  # BONUS: sorting by amount of elements in combination
+   #
+   # print sequence:
+   print("Optimal combinations: ")
+   if arr == []:
+      print(" No matches found.")
+   else:
+      printout = []
+      for b in arr:
+         lengt = 0
+         for a in b:
+            lengt += len(a)
+         printout.append([lengt, len(b), b])
+      printout.sort(reverse=True)
+      #
+      # '''printout only of the top level, sorted by number of groups (thanks to "len(b)")'''
+      number = printout[0][0]
+      for a in printout:
+         if a[0] >= number:
+            print("%2d %r" % (printout.index(a), a))
+         else:
+            break
+   #
+   # TODO: print sequence that '''prints only the single top result'''
    return arr
 
-# =============================== CODE: =======================================
-# counting:
-proc = spcInput()
-print("Sorted: %r %r \n" % (len(proc), proc))
-if sum(proc) < 40:
-   print("Not enough, come back later.")
-else:
-   #printout2 = kombinZ(proc)
-      
-##   print("\nkombi_opt: ")
-##   printout4 = []
-   #printout3 = kombi_opt(printout2, proc)
-   kombi_opt(kombinZ(proc), proc)
-##   for y in printout3:
-##      lengt = 0
-##      for x in y:
-##         lengt += len(x)
-##      printout4.append([lengt, y])
-##   printout4.sort(reverse=True)
-##   for x in printout4:
-##      print(printout4.index(x), x)
+# BONUS: 
+#  def write_best():
+#     list only combos of highest item count
+#     ==  ommit entries of kombi_opt of count lower than the highest
+#     AND if kombi_opt is empty --> list from kombinZ
 
-##   print("\nPo kombinZ: ")
-##   printout5 = []
-##   for x in printout2:
-##      printout5.append([len(x), x])
-##   printout5.sort(reverse=True)
-##   for x in printout5:
-##      print(printout5.index(x), x)
+# =============================== KOD: =================================
+while 1:
+   proc = spcInput()
+   print("Sorted:\n   %r %r \n" % (len(proc), proc))
+   if sum(proc) < 40:
+      print("That's not enough for recipe, loot some more.")
+   else:
+      kombi_opt(kombinZ(proc,[(40,)]), proc)          
+      # w/o the "[(40,)]" the loop goes awry..
+      # this is necessary bc the functions don't seem to start "from zero" next time they're called in Python (or at least the way I wrote them..?)
+   input("\n\nPress ctrl-c to stop and exit.\n")      # I know, I knoooow...
+   # TODO: 'Esc' ends d'program (== ctrl-c?) "Press Esc to exit, Enter to cont."
 
-    
-# TODO: cmpr-Times(kombin+uniqL, kombinZ)
-#
-# TODO: prefer to use the greatest amount of items (== those of the lesser values)
-#     : 1. check "inoverflapping" between each other
-#          (sorting results: by amount of <instances> --> am. of flasks + am. of elements)
-#       2. if overflapping, sort options from the most numerous downwards
-#          (this might be a subtype of the above, even)
-#
-## combinations from "2" till "stop if the whole previous one yielded nothing"
-## would have to be each-with-each
-## by means of "exhausting d'printout" = when trying to append element already used --> next
-## recursion could've worked here on a list one-by-one
-## or: generate all combinations and check them one-by-one
-##     (though it's a matter of generating them one-by-one, which I know not how to do)
-
-# check all combinations 2-4 timed, and print only these unexhausting (+ number of the used ones)
-# still needs to print all solitary ones
-# 
+# TODO: cmprTimes(kombin+uniqL, kombinZ)
 input()
-
