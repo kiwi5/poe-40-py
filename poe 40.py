@@ -32,7 +32,7 @@ def spcInput():
          tabl = [int(a) for a in tabl]
          print("Raw:  %r" % tabl)
       except (NameError, SyntaxError):
-         # didn't test how these catch now..
+         # TODO: test how these catch now..
          print("Incorrect input: I take only numbers and spaces or comas.")
          continue
       
@@ -159,7 +159,7 @@ def checkAgain():
      # BONUS: Enter/Esc
      return input("> ").lower().startswith("y")
 
-# =============================== KOD: =================================
+# =============================== CODE: ================================
 while True:
    perc = spcInput()
    print("Sorted:\n   %r %r \n" % (len(perc), perc))

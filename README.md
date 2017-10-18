@@ -19,7 +19,7 @@ Only after running this script have I gotten to know _how many_ more combination
 
 
 Made for the purpose of learning and automation. 
-Maybe someone else will find it useful, too, but I expect there to be better solutions to this already.
+Maybe someone else will find it useful, too, but I expect there to be better solutions for this already.
 
 This is what I consider my very first complete program, although there have been a few tiny ones before.
 
