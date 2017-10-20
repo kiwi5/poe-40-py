@@ -13,16 +13,18 @@ Saves the time, as counting it in calculator (or mentally, as some are able to) 
 
 #### :pushpin: Bug note:
 There's one significant bug I've found: if the input allows for __two identical__ combinations to be possible, it returns only one of them.
-   For example 
-   > '10 10 10 10 10 10 10 10' 
-   should return 
-   > [8, 2, (10, 10, 10, 10),(10, 10, 10, 10)] 
-   (that's 8 items in 2 groups/recipes), but it returns only 
-   > [4, (10, 10, 10, 10)]. 
-   When numbers are more varied it could be much more difficult to notice than in this simple example.
+   ```
+   # For example 
+   '10 10 10 10 10 10 10 10' 
+   # should return 
+   [8, 2, (10, 10, 10, 10),(10, 10, 10, 10)] 
+   # (that's 8 items in 2 groups/recipes), but it returns only 
+   [4, (10, 10, 10, 10)]. 
+   # When numbers are more varied it could be much more difficult to notice than in this simple example.
+   ```
 
 #### NOTE: It needs [Python 3](https://www.python.org/downloads/) installed on your machine to work. Python 2 shouldn't work.
-###### Tested on Python 3.6.2 only.
+#### Tested on Python 3.6.2 only.
 
 Only after running this script have I gotten to know _how many_ more combinations there could be, that I hadn't even suspected.
 
@@ -34,7 +36,7 @@ Maybe someone else will find it useful, too, but I expect there to be better sol
 
 This is what I consider my very first complete program, although there have been a few tiny ones before.
 
-##### Todo here:
+#### Todo here:
    - [x] read about Markdown and format this document better
    - [x] note some case-use bugs
    - [x] give example of input and output?
