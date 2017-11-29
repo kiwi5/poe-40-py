@@ -5,6 +5,10 @@
 # TODO: shorten loops using list comprehension + so it'd only ever be adding what's =40, at all
 # TODO: if 'kombin()' won't find ANY combination --> print this info & cease operation
 
+# TODO:switch: 1.allow floats; 2.find all combinations EQUAL OR LESS THAN x; 3.map values to strings;
+## thus:    "what combinations of products are available within budget"
+## this will most probably require a separate BRANCH 
+
 
 # BONUS: additional features & things that may become TODOs once current ones are dealt with
 # BUG: 
@@ -18,8 +22,10 @@ from sys import exit
 
 # ============================ FUNCTIONS: ==============================
 def spcInput():
-   '''Asks for integer input: returns reversely sorted list of values (1-19).'''
-   print("Input values separated with spaces or comas and press Enter:")
+   '''Asks for integer input,  
+   returns list of values (1-19), sorted from the highest.'''
+   
+   print("\nInput values separated with spaces or comas and press Enter:")
    while True:
       try:   
          # TEST: str("6 18 14 9 12 10 10 10 9 5 8 2 10")
@@ -42,66 +48,97 @@ def spcInput():
    return tabl
 
 def kombin(perc_array_, arr=[(40,)]):
-   '''Returns all combinations summing up to 40, sorted up, \nand prints them in lines.'''
+   '''Returns all combinations summing up to 40, sorted up, 
+   and prints them in lines.'''
+   
    # BUG: if there're *possible* TWO IDENTICAL combinations, then it treats one as duplicate!
    ## eg. '10 10 10 10 10 10 10 10' (that's 2x40 combos, and as such should be returned)
+   
+   # BUG: w/o resetting the 'arr=..' above, the function behaves as if initiated with values it had at its end in the previous loop
+   ## I didn't expect Python to do that...
+   
    # BONUS: sorted in algorithm itself (is that doable?)
    # BONUS: addition of [optional] simple argument for 'variable 40'
-   # TODO.META:   1. de-duplicate after/while generation
-   ##             2. the 'and' from the 'if' below & non-empty initial list --> are not necessary
-   ##             3. <here was supposed to BE something, perhabs...>
+   
+   # TODO.META:   
+   ## 1. de-duplicate after/while generation
+   ## 2. the 'and' from the 'if' below & non-empty initial list --> are not necessary
+   ## 3. <here was supposed to BE something, perhabs...>
+   
    perc_array = perc_array_[:]
    perc_array.sort(reverse=True)
    # arr=[(40,)]    # non-empty, so that in 'if' below it doesn't go 'IndexError'
-   # BUG: w/o resetting the 'arr=..' above, the function behaves as if initiated with values it had at its end in the previous loop
-   ## I didn't expect Python to do that...
+   
    for x in range(3,len(perc_array)):      # from 3, bc only 2*20 == 40
-      LT = list(combinations(perc_array, x))      # alien code!
+      LT = list(combinations(perc_array, x))
       LT.sort(reverse=True)
          # so that dups are adjacent
          # TODO: change this to de-dupl. w/o sorting + adjust the 'if' below
          # TODO: change, so that BEFORE THE 'FOR' the list has only unique elems (in the sort itself, already?)
-         ##          or below, moving the iterator to the next unrepeating
-         ##          (bc it checks pointlessly)
+         ##       or below, moving the iterator to the next unrepeating
+         ##       (bc it checks pointlessly)
       for T in LT:
          if sum(T) == 40 and T != arr[-1]:
             # thanks to this "and" there're no dups = and no separate f()'s needed!
             arr.append(T)
+   
+   del arr[0]      # removes lone element, eg. "(40,)"
+   # NOTE: this elem is only needed so that the arr creation above goes w/o error
+   
+   # print("arr BEFORE sorting: ")
+   # for a in arr:
+      # print("%2d %r" % (arr.index(a), a))
+   # print()
+   
    arr.sort(reverse=True)
       # so it returns sorted: by amount of elems in tuple asc. --> numerically
-   #  # BONUS: sorting w/ highest amount on top
-   #
-   # print sequence:
-   print("Raw combinations: ")
-   if arr == [(40,)]:
-      print(" No matches found.")
-      print()
+      # TODO: sorting w/ highest amount on top
+
+   # print("arr AFTER sorting: ")
+   # for a in arr:
+      # print("%2d %r" % (arr.index(a), a))
+   # print()
+   
+   if arr == [(40,)]:   print("Raw combinations: \n No matches found.\n")
    else:
-      # TODO: simplify printout, so it doesn't duplicate by itself (it's so for sorting by amount)    # ??
-      # TODO: don't print entries with less elements than max (bc list can easily get lenghty)
-      # BONUS: remove the element "[(40,)]" from 'arr' variable (or just from printing it)
+      # creation of a list to be printed:
       printout = []
+      l = 0
       for a in arr:
-         printout.append([len(a), a])
+         if len(a) > l:    l = len(a)     # seeking highest item count
+      for a in arr:
+         if len(a) == l:   printout.append([len(a), a])
       printout.sort(reverse=True)
+      
+      # TODO:algo: analyze if it NEEDS sorting here, anymore
+      
+      
+      # printing sequence:
+      print("Raw combinations: ")
       for a in printout:
          print("%2d %r" % (printout.index(a), a))
       print()
-   #
+   
+   # TODO: simplify printout, so it doesn't duplicate by itself (it's so for sorting by amount)    # ??
+   # TODO: don't print entries with less elements than max (bc list can easily get lenghty)
+   # BONUS: remove the element "[1, (40,)]" from 'printout' variable (or just from printing it)
+   
    return arr
 
 def kombiOpt(list0_, ref):
    # TODO: turn this f() into a class (for more flexible printing, among others)
    ##       w/ method to printout elements sorted by their amount in "pair"
+   
    list0 = list0_[:]
    list0.sort(reverse=True)
    arr = []
-   if len(list0[0]) == 1:
-      del list0[0]      # removes lone element, eg. "(40,)"
-   for w in range(2,5): 
+   
+   for w in range(2,5):
       # TODO: don't "i++" anymore, if for "i" had zero results (instead of range ending at "4")
       ## it serves as a (poor) limit to how far it tries to combine them
-      LK = list(combinations(list0, w))      # alien code!
+      ## OR maybe the upper range from some formula, based on lenght of arr?
+      
+      LK = list(combinations(list0, w))
       LK.sort(reverse=True)
       #print(LK[0]) #
       for z in LK:         # each specific case
@@ -119,31 +156,33 @@ def kombiOpt(list0_, ref):
          if not out:
             arr.append(z)
    arr.sort(reverse=True)  # BONUS: sorting by amount of elements in combination
-   #
-   # print sequence:
-   print("Optimal combinations: ")
-   if arr == []:
-      print(" No matches found.")
-      print()
+   
+   if arr == []:  print("Optimal combinations: \n No matches found.\n")
    else:
+      # creation of list to be printed:
       printout = []
       for b in arr:
          lengt = 0
          for a in b:
-            lengt += len(a)
+            lengt += len(a)   # WHY
          printout.append([lengt, len(b), b])
       printout.sort(reverse=True)
-      #
-      # '''printout only of the top level, sorted by number of groups (thanks to "len(b)")'''
-      print("   [item_count, group_count, (groups)")
-      number = printout[0][0]
+         
+      # print sequence:
+      # '''printout only of the top level, sorted by number of groups'''
+      ## (thanks to "len(b)") # WHY
+      print("Optimal combinations: ")
+      # print("   [item_count, group_count, (groups)]")
+      # TODO: groups are spaced like in a table, for readability and cleaniness
+      print("   [n_items, n_groups, (groups)]")
+      n_items = printout[0][0]    # printout[0] is a single combo
       for a in printout:
-         if a[0] >= number:
+         if a[0] >= n_items:      # WHY - print till highest item count
             print("%2d %r" % (printout.index(a), a))
          else:
             print()
             break
-   #
+
    # TODO: print sequence that '''prints only the single top result'''
    return arr
 
