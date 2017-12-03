@@ -4,6 +4,7 @@
 # BONUS: reading from file & FURTHER manual reading - and saving the whole afterwards, for later (must be able to subtract from what's already there)
 # TODO: shorten loops using list comprehension + so it'd only ever be adding what's =40, at all
 # TODO: if 'kombin()' won't find ANY combination --> print this info & cease operation
+# TODO: colored commandline - input|output|messages differently
 
 # TODO:switch: 1.allow floats; 2.find all combinations EQUAL OR LESS THAN x; 3.map values to strings;
 ## thus:    "what combinations of products are available within budget"
@@ -99,7 +100,8 @@ def kombin(perc_array_, arr=[(40,)]):
       # print("%2d %r" % (arr.index(a), a))
    # print()
    
-   if arr == [(40,)]:   print("Raw combinations: \n No matches found.\n")
+   # if arr == [(40,)]:   print("Raw combinations: \n No matches found.\n")
+   if arr == []:   print("Raw combinations: \n No matches found.\n")
    else:
       # creation of a list to be printed:
       printout = []
