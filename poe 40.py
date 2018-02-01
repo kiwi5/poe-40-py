@@ -1,6 +1,6 @@
 ## return values summing up to exactly 40
 
-# tab == 3 spaces
+# \tab == 3 spaces
 
 # BONUS: window always on top
 # BONUS: if compatible file's present --> read data from it w/o asking
@@ -13,16 +13,14 @@
 
 # TODO:switch: 1.allow floats; 2.find all combinations EQUAL OR LESS THAN x; 3.map values to strings;
 ## thus, new use:    "what combinations of products are available within budget"
-## this will most probably require a separate BRANCH 
+## this will likely be better off on a separate branch 
 
 # DONE: if 'kombin()' won't find ANY combination --> print this info & cease operation
 
 # BONUS: additional features & things that may become TODOs once current ones are dealt with
-# BUG: 
+# BUG/FIXED:
 # CASE: # WHY
-# FIXED: 
-# DONE: 
-# TODO: 
+# TODO/DONE:
 
 # ============================= IMPORTS: ===============================
 from itertools import combinations
@@ -42,12 +40,14 @@ def spcInput():
       try:   
          # TEST: str("6 18 14 9 12 10 10 10 9 5 8 2 10")
          # TEST: str(" 43 5 -565-43-78_32+32,65,32  ,456 +_,64")
+         # TEST: str("43 5 -565-43-78_32+32,65,32  ,456 +_,64 5 5 5 5 10 6")
+         # TEST: str("2 4 5 12 43 12 114 14 16 19 0 10 22 3 4 5 7")
          tabl = input("> ")
-         tabl = sub("(^\D+)|(\D+$)","",sub("\D+",",",tabl))
+         tabl = sub( "(^\D+)|(\D+$)", "", sub("\D+",",",tabl) )
          # allows nothing besides digits at beginning/end of input
          #  and changes any other non-digits in-between to comas
          hasDigits = search("\d", tabl)
-         # bc: 'only alpha' input flips 'int(a)' over, bc it's an empty string D:
+         # bc: 'only alpha' input flips 'int(a)' over - was giving an empty string D:
          if not hasDigits:
             continue
          tabl = tabl.split(",")
@@ -65,45 +65,47 @@ def spcInput():
    print("Sorted & filtered:\n  %3r %r \n" % (len(tabl), tabl))
    return tabl
 
-def kombin(item_array_, arr=[(40,)]):
+def kombin(item_array_, arr=None):
    '''
    Returns all combinations summing up to 40, sorted descending, 
    AND prints them in lines.
    '''
    
+   if arr == None:
+      arr=[(40,)] 
+      # non-empty, so that in 'if' below (of the 'for' in the 'arr' creation) it doesn't go 'IndexError'
+      # TODO: find another way to check last elem w/o IndexError, even if list is empty
+   
    # BUG: if there're *possible* TWO IDENTICAL combinations, then it treats one as duplicate!
    ## eg. '10 10 10 10 10 10 10 10' (that's 2x40 combos, and as such should be returned)
    
-   # BUG: w/o resetting the 'arr=..' above, the function behaves as if initiated with values it had at its end in the previous loop
+   # FIXED: w/o resetting the 'arr=..' above, the function behaves as if initiated with values it had at its end in the previous loop
    ## I didn't expect Python to do that...
    ## so it's like, variables belonging to a LOOP, merely INITIATED by function?
    ## or rather: belonging/local to the function, BUT retained while in the loop, between function runs
    
-   # BONUS: sorted in algorithm itself (is that doable?)
-   # BONUS: addition of [optional] simple argument for 'variable 40'
+   # BONUS: sorted in algorithm itself
+   # DONE: addition of [optional] simple argument for 'variable 40'
    
    # TODO.META:   
    ## 1. de-duplicate after/while generation
    ## 2. the 'and' from the 'if' below & non-empty initial list --> are not necessary
    ## 3. <here was supposed to BE something, perhabs...>
-
+   
+   
    item_array = item_array_[:]
    item_array.sort(reverse=True)
    
-   # arr=[(40,)]    # non-empty, so that in 'if' below it doesn't go 'IndexError'
-   # TODO: find another way to check last elem w/o IndexError, even if list is empty
-
-   # if not arr == [whatever]:   arr = [()]      # if arr isn't already initiated
-   
    for n in range(3,len(item_array)):  # no less than 3 elems, bc only 2*20 == 40
       tupleList = list(combinations(item_array, n))
+      
       tupleList.sort(reverse=True)   # sorting --> duplicates become adjacent
          # TODO: change this to de-dupl. w/o sorting + adjust the 'if' below
          # TODO: change, so that BEFORE THE 'FOR' the list has only unique elems 
          ##       in the sort itself, already?
          ##       or below, moving the iterator to the next unrepeating
          ##       (bc it checks pointlessly)
-      # arr.append([tupl for tupl in tupleList if sum(tupl) == lim and tupl != arr[-1]])  # does sth *slightly* different
+         
       for tupl in tupleList:
          if sum(tupl) == lim and tupl != arr[-1]:
             arr.append(tupl)
@@ -117,7 +119,8 @@ def kombin(item_array_, arr=[(40,)]):
       ## --> numerically within given amount, descending
       
       # TODO:?: sorting w/ highest amount on top  # did I do that already?
-
+      
+   # before I print this, it needs to...
    if not arr:
       print("You have more than %d, but no exact matches found.\n" % lim)
       # BUG: '12 18 10' triggers here, but '12 18 10 1' passes well
@@ -134,7 +137,7 @@ def kombin(item_array_, arr=[(40,)]):
       printo = [[len(tup), tup] for tup in arr if len(tup) == maxItems]
       printo.sort(reverse=True)
       
-      # TODO:algo: analyze if it NEEDS sorting here, anymore
+      # TODO: analyze if it NEEDS sorting here, anymore
       ## probably not, since arr's been sorted just before,
       ## and its order is retained here
       
@@ -192,7 +195,7 @@ def kombiOpt(list0_, ref):
          #  and discontinues creating a kombo, if tupl exhausted the ref
          
       komboList.sort(reverse=True)
-      #print(komboList[0]) #
+      #print(komboList[0]) #TEST
       for kombo in komboList:
          ref_cpy = ref[:]
          out = False
@@ -203,14 +206,14 @@ def kombiOpt(list0_, ref):
                   # rm values from copy of ref, till it's empty
                   # removal attempt after emptied == this combo is impossible
                except (ValueError, IndexError):    # WHY
-                  out = True
+                  out = True  # bc I gotta..
                   break
-            if out:
+            if out:           # ..of these loops SOMEHOW (this is a bad pun)
                break
          if not out:
             arr.append(kombo)
    arr.sort(reverse=True)
-   # BONUS: sorting by amount of elements in combination #??
+   # BONUS: sorting by amount of elements in combination    #??
    
    if not arr:
       print("Optimal combinations available: \n No matches found.\n")
@@ -224,8 +227,11 @@ def kombiOpt(list0_, ref):
          for tupl in tupleCombo:
             itemCount += len(tupl)
          printout.append([itemCount, len(tupleCombo), tupleCombo])
-         # print(printout[-1])  #TEST
-      # print()  #TEST
+      ## itemCounts = [sum( [len(tupl) for tupl in tupleCombo] )
+                   ## for tupleCombo in arr]
+      ## maxItems = max(itemCounts)
+      ## printout = [ [maxItems, len(tupleCombo), tupleCombo]
+                   ## for tupleCombo in arr if #len(tupl) = maxItems]
       
       # at this point they're only sorted by the very first item, descending
       printout.sort(reverse=True)
@@ -234,12 +240,12 @@ def kombiOpt(list0_, ref):
       
       # for testing: 2 4 5 12 43 12 114 14 16 19 0 10 22 3 4 5
       
-      # BONUS: get lowerThanTop/n_OfTop by counting 
-      # how many times 'printout[a][0]' is equal to printout[0][0]
+      # BONUS: get lowerThanTop/n_OfTop by counting..
+      # ..how many times 'printout[a][0]' is equal to printout[0][0]
       ## s.count(x)   - total number of occurrences of x in s
       ## adress_of_itemCount  .count(  singleNumber_itemCountObject  )
       ## printout[a][0]       .count(  printout[0][0]                )
-      ## hmm, how'd I do 'max(printout[a][0])'
+      ## hmm, how'd I do 'max(printout[a][0])' ?
       
       # printout[a]     is a single combo
       # printout[a][0]  is the first number == combo itemCount
@@ -258,8 +264,7 @@ def kombiOpt(list0_, ref):
       
       print("Optimal combinations available: ")
       print("  n [n_items, n_groups, (groups)] ")
-      for combo in printout:
-            print("%3d %r" % (printout.index(combo)+1, combo))
+      [print("%3d %r" % (printout.index(combo)+1, combo)) for combo in printout]
       print()
       # TODO: groups spaced like in a table, for readability and cleaniness
 
@@ -275,29 +280,35 @@ def kombiOpt(list0_, ref):
 #     AND if kombiOpt is empty --> list best from kombi
 
 def checkAgain():
-     '''Returns True if the user wants to check again, else it returns False.'''
-     while True:
-        i = input("Do you want to check again? (Enter / n) ").lower()
-        if        not i:               return True
-        elif      i.startswith("n"):   return False
+   '''
+   Returns True if the user wants to check again, else it returns False.
+   Asks until user either inputs 'n' or presses 'Enter'.
+   '''
+   while True:
+      i = input("Do you want to check again? (Enter / n) ").lower()
+      if        not i:               return True
+      elif      i.startswith("n"):   return False
 
 # =============================== CODE: ================================
-while True:
-   # TODO: count the time it took the PC to perform from here till 'checkAgain()'
-   lim = 40
-   items = spcInput()
-   
-   if sum(items) < lim:
-      print(" You have less than %d - you need to loot some more.\n" % lim)
-   else:
-      kombiOpt( kombin(items,[(lim,)]) , items )
-      # w/o the explicit "[(40,)]" the loop goes awry..
-      ## this is bc the functions don't seem to start "from zero"
-      ## the next time they're called (or at least the way I wrote them..?)
-   
-   if not checkAgain():
-      exit()
-   
-   print()
+lim = 40
+def main():
+   while True:
+      # BONUS: count the time it took the PC to perform from here till 'checkAgain()'
+      items = spcInput()
+      
+      if sum(items) < lim:
+         print(" You have less than %d - you need to loot some more.\n" % lim)
+      else:
+         kombin_arr = kombin(items)
+         kombiOpt(kombin_arr, items)
+      
+      if not checkAgain():
+         exit()
+      
+      print()
 
-input()
+   input()
+
+if __name__ == "__main__":
+   # execute only if run as a script
+   main()
