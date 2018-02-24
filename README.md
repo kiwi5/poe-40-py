@@ -27,17 +27,10 @@ There's one significant bug I've found: if the input allows for __two identical_
 
 
 #### NOTE: It needs [Python 3](https://www.python.org/downloads/) installed on your machine to work. Python 2 shouldn't work.
-#### Tested on Python 3.6.2 only.
+#### Tested on Win 7, with Python 3.6.2.
 
 
 ====================================
 
 Made for the purpose of learning and automation. 
-Maybe someone else will find it useful, too, but I expect there to be better solutions for this already.
-
-This is what I consider my very first complete program, although there have been a few tiny ones before.
-
-#### Todo here:
-   - [x] read about Markdown and format this document better
-   - [x] note some case-use bugs
-   - [x] give example of input and output?
+Maybe someone else will find it useful too, but I expect there to be better solutions for this already.
