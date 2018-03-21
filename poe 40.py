@@ -29,11 +29,9 @@ from sys import exit
 
 # ============================ FUNCTIONS: ==============================
 def spcInput():
-   '''
-   Asks for integer input.
-   
-   Returns list of values (1-19), sorted descending.
-   '''
+   """
+   Asks for integer input. Returns list of values (1-19), sorted descending.
+   """
    
    print("Input numeric values separated with spaces or comas and press Enter:")
    while True:
@@ -66,13 +64,11 @@ def spcInput():
    return tabl
 
 def kombin(item_array_, arr=None):
-   '''
-   Returns all combinations summing up to 40, sorted descending, 
-   AND prints them in lines.
-   '''
+   """
+   Returns all combinations summing up to 40, sorted descending, AND prints them in lines.
+   """
    
-   if arr == None:
-      arr=[(40,)] 
+   if arr == None: arr=[(40,)]
       # non-empty, so that in 'if' below (of the 'for' in the 'arr' creation) it doesn't go 'IndexError'
       # TODO: find another way to check last elem w/o IndexError, even if list is empty
    
@@ -152,7 +148,7 @@ def kombin(item_array_, arr=None):
    return arr
 
 def kombiOpt(list0_, ref):
-   '''
+   """
    Takes:
       list0_   -  list of tuples (combinations).
       ref      -  a referential list from which they were generated.
@@ -160,7 +156,7 @@ def kombiOpt(list0_, ref):
    Generates:     sums of these combinations and compares them to the list.
    
    Returns:       only sums of combinations that don't require items not present in the list.
-   '''
+   """
    
    # TODO: turn this f() into a class (for more flexible printing, among others)
    ##       w/ method to printout elements sorted by their amount in "pair"
@@ -259,7 +255,7 @@ def kombiOpt(list0_, ref):
       del printout[n_OfTop:]
      
       # printing sequence:
-      # '''printout only of the top level, sorted by number of groups'''
+      # """printout only of the top level, sorted by number of groups"""
       ## (thanks to "len(tupleCombo)")
       
       print("Optimal combinations available: ")
@@ -268,7 +264,7 @@ def kombiOpt(list0_, ref):
       print()
       # TODO: groups spaced like in a table, for readability and cleaniness
 
-   # BONUS: print function that '''prints only the single top result'''
+   # BONUS: print function that """prints only the single top result"""
    ## OR TAKES NUMBER of results to print
    
    return arr
@@ -280,10 +276,10 @@ def kombiOpt(list0_, ref):
 #     AND if kombiOpt is empty --> list best from kombi
 
 def checkAgain():
-   '''
+   """
    Returns True if the user wants to check again, else it returns False.
    Asks until user either inputs 'n' or presses 'Enter'.
-   '''
+   """
    while True:
       i = input("Do you want to check again? (Enter / n) ").lower()
       if        not i:               return True
@@ -294,8 +290,8 @@ lim = 40
 def main():
    while True:
       # BONUS: count the time it took the PC to perform from here till 'checkAgain()'
-      items = spcInput()
       
+      items = spcInput()
       if sum(items) < lim:
          print(" You have less than %d - you need to loot some more.\n" % lim)
       else:
@@ -304,9 +300,7 @@ def main():
       
       if not checkAgain():
          exit()
-      
       print()
-
    input()
 
 if __name__ == "__main__":
