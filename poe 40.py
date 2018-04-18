@@ -5,7 +5,7 @@
 # BONUS: window always on top
 # BONUS: if compatible file's present --> read data from it w/o asking
 # BONUS: reading from file & FURTHER manual reading - and saving the whole afterwards, for later (must be able to subtract from what's already there)
-# BONUS: better handling of input cases with vslues ONLY beyond (1-19)
+# BONUS: better handling of input cases with values ONLY beyond (1-19)
 
 # TODO: shorten loops using list comprehension + so it'd only ever be adding what's =40, at all
 # TODO: colored commandline - input|output|messages differently
@@ -29,9 +29,7 @@ from sys import exit
 
 # ============================ FUNCTIONS: ==============================
 def spcInput():
-   """
-   Asks for integer input. Returns list of values (1-19), sorted descending.
-   """
+   """Asks for integer input. Returns list of values (1-19), sorted descending."""
    
    print("Input numeric values separated with spaces or comas and press Enter:")
    while True:
@@ -63,14 +61,14 @@ def spcInput():
    print("Sorted & filtered:\n  %3r %r \n" % (len(tabl), tabl))
    return tabl
 
-def kombin(item_array_, arr=None):
-   """
-   Returns all combinations summing up to 40, sorted descending, AND prints them in lines.
-   """
-   
-   if arr == None: arr=[(40,)]
-      # non-empty, so that in 'if' below (of the 'for' in the 'arr' creation) it doesn't go 'IndexError'
-      # TODO: find another way to check last elem w/o IndexError, even if list is empty
+class kombin:
+   """Returns all combinations summing up to 40, sorted descending, AND prints them in lines."""
+   def __init__(self, item_array_, arr=None):
+      if arr == None: self.arr=[(40,)]
+      else: self.arr = arr
+      self.item_array = item_array_[:]
+      self.item_array.sort(reverse=True)
+      self.printo = []
    
    #
       # BUG: if there're *possible* TWO IDENTICAL combinations, then it treats one as duplicate!
@@ -88,67 +86,71 @@ def kombin(item_array_, arr=None):
       ## 1. de-duplicate after/while generation
       ## 2. the 'and' from the 'if' below & non-empty initial list --> are not necessary
       ## 3. ??
-   
-   item_array = item_array_[:]
-   item_array.sort(reverse=True)
-   
-   # in each increasing combination of items, check which equals LIM and add it to the <wanted> array
-   #FIXED: for 18,12,10 it skips here, bc range(3,3) == []
-   ##  same with '12 18 6 4' vs '12 18 6 4 1'
-   for n in range(3,len(item_array)+1):  # no less than 3 items, bc only 2*20 == 40
-      tupleList = [c for c in combinations(item_array, n) if sum(c) == lim]
-      if len(arr) > 1 and not tupleList: break
-            # because 
 
-      tupleList.sort(reverse=True)   # sorting --> duplicates become adjacent
+   def simpleCombins(self):
+      """in each increasing combination of items, check which equals LIM and add it to the <wanted> array"""
+      #FIXED: for 18,12,10 it skips here, bc range(3,3) == []
+      ##  same with '12 18 6 4' vs '12 18 6 4 1'
+      for n in range(3,len(self.item_array)+1):  # no less than 3 items, bc only 2*20 == 40
+         tupleList = [c for c in combinations(self.item_array, n) if sum(c) == lim]
+         if len(self.arr) > 1 and not tupleList: break
+            # because    
+         tupleList.sort(reverse=True)   # sorting --> duplicates become adjacent
          # TODO: change this to de-dupl. w/o sorting + adjust the 'if' below
-         # TODO: change, so that BEFORE THE 'FOR' the list has only unique elems 
+         # TODO: change, so that BEFORE the 'for' the list has only unique elems 
          ##       in the sort itself, already?
          ##       or below, moving the iterator to the next unrepeating
          ##       (bc it checks pointlessly)
-         
-      for tupl in tupleList:
-         if tupl != arr[-1]:
-            arr.append(tupl)
+      
+         for tupl in tupleList:
+            if tupl != self.arr[-1]:
+               self.arr.append(tupl)
    
-   del arr[0]     # removes first element, eg. "(40,)" or other placeholder
-   # NOTE: this is only needed so that the arr appending above goes w/o IndexError
-   
-   arr.sort(reverse=True)
+      del self.arr[0]     # removes first element, eg. "(40,)" or other placeholder
+      # NOTE: this is only needed so that the arr appending above goes w/o IndexError
+      # TODO: find another way to check last elem w/o IndexError, even if list is empty
+
+      self.arr.sort(reverse=True)
       # so the tuples are sorted: 
       ## by amount of elems in a tuple, descending --> 
       ## --> numerically within given amount, descending
       
-      # TODO:?: sorting w/ highest amount on top  # did I do that already?
-      
-   # before I print this, it needs to...
-   if not arr:
-      print("You have more than %d, but no exact matches found.\n" % lim)
-   else:
-      # creation of the list to be printed:
-      # TODO: wait, DON'T I already have amounts SPECIFIED?
-      ## just read that and:
-      ##    1) rm what's less
-      #     OR
-      ##    2) count them and 'cutTail()', bc they're already sorted
-      maxItems = max([len(tup) for tup in arr])
-      
-      printo = [[len(tup), tup] for tup in arr if len(tup) == maxItems]
-      printo.sort(reverse=True)
-      
-      # TODO: analyze if it NEEDS sorting here, anymore
-      ## probably not, since arr's been sorted just before,
-      ## and its order is retained here
-      
-      # printing sequence:
+   def createPrintList(self):
+      """creation of the list to be printed"""
+      # TODO: this needs to be run even when "print" isn't used
+      if self.arr==[(40,)]:
+         self.simpleCombins()
+      if not self.arr:
+         print("You have more than %d, but no exact matches found.\n" % lim)
+      else:
+         maxItems = max([len(tup) for tup in self.arr])
+         
+         self.printo = [[len(tup), tup] for tup in self.arr if len(tup) == maxItems]
+         self.printo.sort(reverse=True)
+
+         # TODO: wait, DON'T I already have amounts SPECIFIED?
+         ## just read that and:
+         ##    1) rm what's less
+         #     OR
+         ##    2) count them and 'cutTail()', bc they're already sorted
+         
+         # TODO: analyze if it NEEDS sorting here, anymore
+         ## probably not, since arr's been sorted just before,
+         ## and its order is retained here
+
+   def print(self):
+      """printing sequence"""
+      if not self.printo: 
+         self.createPrintList()
       print("Simple combinations available: ")
-      for tup in printo:
-         print("%2d %r" % (printo.index(tup)+1, tup))
+      for tup in self.printo:
+         print("%2d %r" % (self.printo.index(tup)+1, tup))
       print()
-   
-   # TODO: simplify printout, so it doesn't duplicate by itself (it's so for sorting by amount)    # ??
-   
-   return arr
+      # TODO: simplify printout, so it doesn't duplicate by itself (it's so for sorting by amount)    # ??
+      
+   # def __get__(self, obj, objtype):
+   #    if not self.arr: self.simpleCombins()
+   #    return self.arr
 
 def kombiOpt(list0_, ref):
    """
@@ -299,7 +301,8 @@ def main():
          print(" You have less than %d - you need to loot some more.\n" % lim)
       else:
          kombin_arr = kombin(items)
-         kombiOpt(kombin_arr, items)
+         kombin_arr.print()
+         kombiOpt(kombin_arr.arr, items)
       
       if not checkAgain():
          exit()
