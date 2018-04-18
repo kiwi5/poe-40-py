@@ -72,29 +72,34 @@ def kombin(item_array_, arr=None):
       # non-empty, so that in 'if' below (of the 'for' in the 'arr' creation) it doesn't go 'IndexError'
       # TODO: find another way to check last elem w/o IndexError, even if list is empty
    
-   # BUG: if there're *possible* TWO IDENTICAL combinations, then it treats one as duplicate!
-   ## eg. '10 10 10 10 10 10 10 10' (that's 2x40 combos, and as such should be returned)
-   
-   # FIXED: w/o resetting the 'arr=..' above, the function behaves as if initiated with values it had at its end in the previous loop
-   ## I didn't expect Python to do that...
-   ## so it's like, variables belonging to a LOOP, merely INITIATED by function?
-   ## or rather: belonging/local to the function, BUT retained while in the loop, between function runs
-   
-   # BONUS: sorted in algorithm itself
-   # DONE: addition of [optional] simple argument for 'variable 40'
-   
-   # TODO.META:   
-   ## 1. de-duplicate after/while generation
-   ## 2. the 'and' from the 'if' below & non-empty initial list --> are not necessary
-   ## 3. <here was supposed to BE something, perhabs...>
-   
+   #
+      # BUG: if there're *possible* TWO IDENTICAL combinations, then it treats one as duplicate!
+      ## eg. '10 10 10 10 10 10 10 10' (that's 2x40 combos, and as such should be returned)
+      
+      # FIXED: w/o resetting the 'arr=..' above, the function behaves as if initiated with values it had at its end in the previous loop
+      ## I didn't expect Python to do that...
+      ## so it's like, variables belonging to a LOOP, merely INITIATED by function?
+      ## or rather: belonging/local to the function, BUT retained while in the loop, between function runs
+      
+      # BONUS: sorted in algorithm itself
+      # DONE: addition of [optional] simple argument for 'variable 40'
+      
+      # TODO.META:   
+      ## 1. de-duplicate after/while generation
+      ## 2. the 'and' from the 'if' below & non-empty initial list --> are not necessary
+      ## 3. ??
    
    item_array = item_array_[:]
    item_array.sort(reverse=True)
    
-   for n in range(3,len(item_array)):  # no less than 3 elems, bc only 2*20 == 40
-      tupleList = list(combinations(item_array, n))
-      
+   # in each increasing combination of items, check which equals LIM and add it to the <wanted> array
+   #FIXED: for 18,12,10 it skips here, bc range(3,3) == []
+   ##  same with '12 18 6 4' vs '12 18 6 4 1'
+   for n in range(3,len(item_array)+1):  # no less than 3 items, bc only 2*20 == 40
+      tupleList = [c for c in combinations(item_array, n) if sum(c) == lim]
+      if len(arr) > 1 and not tupleList: break
+            # because 
+
       tupleList.sort(reverse=True)   # sorting --> duplicates become adjacent
          # TODO: change this to de-dupl. w/o sorting + adjust the 'if' below
          # TODO: change, so that BEFORE THE 'FOR' the list has only unique elems 
@@ -103,11 +108,11 @@ def kombin(item_array_, arr=None):
          ##       (bc it checks pointlessly)
          
       for tupl in tupleList:
-         if sum(tupl) == lim and tupl != arr[-1]:
+         if tupl != arr[-1]:
             arr.append(tupl)
    
    del arr[0]     # removes first element, eg. "(40,)" or other placeholder
-   # NOTE: this elem is only needed so that the arr creation above goes w/o error
+   # NOTE: this is only needed so that the arr appending above goes w/o IndexError
    
    arr.sort(reverse=True)
       # so the tuples are sorted: 
@@ -119,8 +124,6 @@ def kombin(item_array_, arr=None):
    # before I print this, it needs to...
    if not arr:
       print("You have more than %d, but no exact matches found.\n" % lim)
-      # BUG: '12 18 10' triggers here, but '12 18 10 1' passes well
-      #  same with '12 18 6 4' vs '12 18 6 4 1'
    else:
       # creation of the list to be printed:
       # TODO: wait, DON'T I already have amounts SPECIFIED?
