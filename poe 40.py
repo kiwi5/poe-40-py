@@ -34,16 +34,13 @@ def spcInput():
    print("Input numeric values separated with spaces or comas and press Enter:")
    while True:
       try:   
-         # TEST: str("6 18 14 9 12 10 10 10 9 5 8 2 10")
-         # TEST: str(" 43 5 -565-43-78_32+32,65,32  ,456 +_,64")
-         # TEST: str("43 5 -565-43-78_32+32,65,32  ,456 +_,64 5 5 5 5 10 6")
-         # TEST: str("2 4 5 12 43 12 114 14 16 19 0 10 22 3 4 5 7")
          tabl = input("> ")
-         tabl = sub( "(^\D+)|(\D+$)", "", sub("\D+",",",tabl) )
-         # allows nothing besides digits at beginning/end of input
-         #  and changes any other non-digits in-between to comas
-         hasDigits = search("\d", tabl)
-         # bc: 'only alpha' input flips 'int(a)' over - was giving an empty string D:
+         tabl = sub(r"\D+", ",", tabl)
+            # changes any non-digits to comas
+         tabl = sub(r"(^\D+)|(\D+$)", "", tabl)
+            # allows nothing besides digits at beginning/end of input
+         hasDigits = search(r"\d", tabl)
+            # bc: int() gives an empty string on 'alphabetical-only' input
          if not hasDigits:
             continue
          tabl = tabl.split(",")
@@ -69,6 +66,7 @@ class kombin:
       self.item_array = item_array_[:]
       self.item_array.sort(reverse=True)
       self.printo = []
+      self.createPrintList()
    
    #
       # BUG: if there're *possible* TWO IDENTICAL combinations, then it treats one as duplicate!
@@ -117,7 +115,6 @@ class kombin:
       
    def createPrintList(self):
       """creation of the list to be printed"""
-      # TODO: this needs to be run even when "print" isn't used
       if self.arr==[(40,)]:
          self.simpleCombins()
       if not self.arr:
@@ -140,8 +137,8 @@ class kombin:
 
    def print(self):
       """printing sequence"""
-      if not self.printo: 
-         self.createPrintList()
+      # if not self.printo: 
+      #    self.createPrintList()
       print("Simple combinations available: ")
       for tup in self.printo:
          print("%2d %r" % (self.printo.index(tup)+1, tup))
