@@ -22,10 +22,12 @@
 # CASE: # WHY
 # TODO/DONE:
 
+
 # ============================= IMPORTS: ===============================
 from itertools import combinations
 from re import sub, search
 from sys import exit
+
 
 # ============================ FUNCTIONS: ==============================
 def spcInput():
@@ -45,24 +47,35 @@ def spcInput():
             continue
          tabl = tabl.split(",")
          tabl = [int(a) for a in tabl]
-         print("\nRaw:  %r" % tabl)
       except (NameError, SyntaxError):    # WHY
          # TODO: test how do these catch now.. maybe it's well without, now?
          print("Incorrect input: I take only numbers and spaces or comas.\n")
          continue
          # TODO: is this 'continue' needed? does it go back or forward w/o?
-      
-      [tabl.remove(it) for it in tabl[:] if it > 19 or it < 1]
       break
+      
+   tabl_1 = tabl[:]
+   [tabl.remove(it) for it in tabl[:] if it > 19 or it < 1]
    tabl.sort(reverse=True)
-   print("Sorted & filtered:\n  %3r %r \n" % (len(tabl), tabl))
+   
+   numberLength = len(str(len(tabl)))
+   offsetChosen = 3
+   offsetSecondary = 0
+   if numberLength > offsetChosen:
+      offsetSecondary = numberLength - 2
+   
+   print(f"\nRaw:  {' '*offsetSecondary}{tabl_1}")
+   print(f"Sorted & filtered:\n  {len(tabl):>{offsetChosen}} {tabl}\n")
    return tabl
 
+
 class kombin:
-   """Returns all combinations summing up to 40, sorted descending, AND prints them in lines."""
+   """Returns all combinations summing up to 40, sorted descending. Has a "print()" function to print them in lines."""
    def __init__(self, item_array_, arr=None):
-      if arr == None: self.arr=[(40,)]
-      else: self.arr = arr
+      if arr == None: 
+         self.arr=[(40,)]
+      else: 
+         self.arr = arr
       self.item_array = item_array_[:]
       self.item_array.sort(reverse=True)
       self.printo = []
@@ -86,13 +99,13 @@ class kombin:
       ## 3. ??
 
    def simpleCombins(self):
-      """in each increasing combination of items, check which equals LIM and add it to the <wanted> array"""
+      """In each increasing combination of items, check which equals LIM and add it to the <wanted> array"""
       #FIXED: for 18,12,10 it skips here, bc range(3,3) == []
       ##  same with '12 18 6 4' vs '12 18 6 4 1'
       for n in range(3,len(self.item_array)+1):  # no less than 3 items, bc only 2*20 == 40
          tupleList = [c for c in combinations(self.item_array, n) if sum(c) == lim]
-         if len(self.arr) > 1 and not tupleList: break
-            # because    
+         if len(self.arr) > 1 and not tupleList: 
+            break          # because    
          tupleList.sort(reverse=True)   # sorting --> duplicates become adjacent
          # TODO: change this to de-dupl. w/o sorting + adjust the 'if' below
          # TODO: change, so that BEFORE the 'for' the list has only unique elems 
@@ -103,8 +116,8 @@ class kombin:
          for tupl in tupleList:
             if tupl != self.arr[-1]:
                self.arr.append(tupl)
-   
-      del self.arr[0]     # removes first element, eg. "(40,)" or other placeholder
+
+      del self.arr[0]      # removes first element, eg. "(40,)" or other placeholder
       # NOTE: this is only needed so that the arr appending above goes w/o IndexError
       # TODO: find another way to check last elem w/o IndexError, even if list is empty
 
@@ -117,11 +130,11 @@ class kombin:
       """creation of the list to be printed"""
       if self.arr==[(40,)]:
          self.simpleCombins()
+
       if not self.arr:
-         print("You have more than %d, but no exact matches found.\n" % lim)
+         print(f"You have more than {lim}, but no exact matches found.\n")
       else:
          maxItems = max([len(tup) for tup in self.arr])
-         
          self.printo = [[len(tup), tup] for tup in self.arr if len(tup) == maxItems]
          self.printo.sort(reverse=True)
 
@@ -148,6 +161,7 @@ class kombin:
    # def __get__(self, obj, objtype):
    #    if not self.arr: self.simpleCombins()
    #    return self.arr
+
 
 def kombiOpt(list0_, ref):
    """
@@ -277,25 +291,25 @@ def kombiOpt(list0_, ref):
 #     ==  ommit entries of kombiOpt of count lower than the highest
 #     AND if kombiOpt is empty --> list best from kombi
 
+
 def checkAgain():
    """
-   Returns True if the user wants to check again, else it returns False.
+   Returns 'True' if the user wants to check again, else it returns 'False'.
    Asks until user either inputs 'n' or presses 'Enter'.
    """
    while True:
       i = input("Do you want to check again? (Enter / n) ").lower()
-      if        not i:               return True
-      elif      i.startswith("n"):   return False
+      if not i:               return True
+      elif i.startswith("n"): return False
+
 
 # =============================== CODE: ================================
 lim = 40
 def main():
    while True:
-      # BONUS: count the time it took the PC to perform from here till 'checkAgain()'
-      
       items = spcInput()
       if sum(items) < lim:
-         print(" You have less than %d - you need to loot some more.\n" % lim)
+         print(f" You have less than {lim} - you need to loot some more.\n")
       else:
          kombin_arr = kombin(items)
          kombin_arr.print()
@@ -304,7 +318,9 @@ def main():
       if not checkAgain():
          exit()
       print()
+
    input()
+
 
 if __name__ == "__main__":
    # execute only if run as a script
